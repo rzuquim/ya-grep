@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\core\Grep.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="BenchmarkDotNet.Artifacts\**" />
+      <Compile Remove="BenchmarkDotNet.Artifacts\**" />
+      <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="Data\medium.zip">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\small.zip">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+</Project>
