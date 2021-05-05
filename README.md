@@ -1,4 +1,7 @@
-# grep
+# ya-grep
 
-A poor's man `grep` clone, written in c#.
+Yet Another (sub-optimal) grep implementation, written in c#.
 
+## License
+
+This project is licensed under the [MIT license](LICENSE).

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grep.Performance", "perform
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grep.Test", "test\Grep.Test.csproj", "{E0CE17CB-BD40-49CE-9AF1-D41A1FD68C09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grep.Console", "console\Grep.Console.csproj", "{194A9207-9F07-4A74-BDD5-3D9FE28AC8DE}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{812A675C-1948-4E21-9D50-80BC5EDAD1A2}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -34,6 +36,10 @@ Global
 		{E0CE17CB-BD40-49CE-9AF1-D41A1FD68C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0CE17CB-BD40-49CE-9AF1-D41A1FD68C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0CE17CB-BD40-49CE-9AF1-D41A1FD68C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{194A9207-9F07-4A74-BDD5-3D9FE28AC8DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{194A9207-9F07-4A74-BDD5-3D9FE28AC8DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{194A9207-9F07-4A74-BDD5-3D9FE28AC8DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{194A9207-9F07-4A74-BDD5-3D9FE28AC8DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,9 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - include line number on result
 - multiple files and directories
 
-## [0.0.1] - 2021-04-XX
+## [0.0.1] - 2021-05-05
 
 ### Added
 
 - Simple text search
-

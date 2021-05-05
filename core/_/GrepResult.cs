@@ -5,6 +5,7 @@ namespace YAGrep {
         public bool IsMatch { get; }
 
         public string Line { get; }
+        /// <summary> one based, line index </summary>
         public int LineNumber { get; }
 
         public int MatchStart { get; }
@@ -25,6 +26,6 @@ namespace YAGrep {
 
         public bool Equals(string other) => other == Line;
 
-        public override string ToString() => Line;
+        public override string ToString() => new { IsMatch, Line, LineNumber, MatchStart, MatchEnd }.ToString();
     }
 }

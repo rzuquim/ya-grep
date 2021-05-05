@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Grep.Performance.Benchmark-20210505-133602</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.18363.1256 (1909/November2018Update/19H2)
+Intel Core i7-9700 CPU 3.00GHz, 1 CPU, 8 logical and 8 physical cores
+.NET Core SDK=5.0.101
+  [Host]     : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+  DefaultJob : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>  Method</th><th>fileName</th><th>   Mean</th><th>Error</th><th>StdDev</th><th>  Gen 0</th><th>Gen 1</th><th>Gen 2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>MatchingSearch</td><td>big</td><td>1,020.650 ms</td><td>19.6414 ms</td><td>28.1691 ms</td><td>152000.0000</td><td>1000.0000</td><td>-</td><td>874.92 MB</td>
+</tr><tr><td>MatchingSearch</td><td>huge</td><td>47,878.279 ms</td><td>356.7859 ms</td><td>333.7378 ms</td><td>11543000.0000</td><td>586000.0000</td><td>-</td><td>63078.79 MB</td>
+</tr><tr><td>MatchingSearch</td><td>medium</td><td>36.677 ms</td><td>0.6698 ms</td><td>0.6265 ms</td><td>4642.8571</td><td>71.4286</td><td>-</td><td>27.59 MB</td>
+</tr><tr><td>MatchingSearch</td><td>small</td><td>6.127 ms</td><td>0.0694 ms</td><td>0.0649 ms</td><td>718.7500</td><td>23.4375</td><td>-</td><td>4.3 MB</td>
+</tr></tbody></table>
+</body>
+</html>

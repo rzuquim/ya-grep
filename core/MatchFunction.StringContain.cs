@@ -28,7 +28,8 @@ namespace YAGrep {
                         if (line[possibleMatchStart + i] != needle[i]) { found = false; break; }
                     // If the whole word was found, return its index, otherwise try again
                     if (found)
-                        return GrepResult.Success(line, lineIndex + 1, possibleMatchStart, possibleMatchStart + needle.Length);
+                        return GrepResult.Success(line, lineIndex + 1,
+                                                  possibleMatchStart, possibleMatchStart + needle.Length - 1);
                     possibleMatchStart = line.IndexOf(c0, ++possibleMatchStart, limit - possibleMatchStart);
                 }
 
