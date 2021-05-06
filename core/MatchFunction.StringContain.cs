@@ -4,7 +4,7 @@ namespace YAGrep {
     // based on: https://www.codeproject.com/Articles/43726/Optimizing-string-operations-in-C
     // TODO: case-insensitive
     internal partial class MatchFunction {
-        private static Func<string, int, GrepResult> NaiveStringContains(string needle, GrepOptions options) =>
+        private static Func<char[], int, GrepResult> NaiveStringContains(string needle, GrepOptions options) =>
             (line, lineIndex) => {
                 var limit = line.Length - needle.Length + 1;
                 if (limit < 1) return GrepResult.Failure(line);

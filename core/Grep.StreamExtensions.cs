@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,13 +19,15 @@ namespace YAGrep {
                 else cancel.Value.ThrowIfCancellationRequested();
             #endregion
 
-            var line = await haystack.ReadLineAsync();
-            if (line == null) return EndReason.EmptyInput;
+            var lineReader = new LineReader(haystack);
+            var line = await lineReader.TryReadLine();
+            if (!line.Any()) return EndReason.EmptyInput;
 
-            var lineIndex = 0;
             var isMatch = MatchFunction.For(needle, options);
-            string nextLine;
-            while ((nextLine = await haystack.ReadLineAsync()) != null) {
+            var lineIndex = 0;
+
+            char[] nextLine;
+            while ((nextLine = await lineReader.TryReadLine()).Any()) {
                 #region should cancel?
                 if (cancel.Value.IsCancellationRequested)
                     if (options.SilentCancel) return EndReason.Canceled;
