@@ -13,41 +13,25 @@ namespace YAGrep {
             options ??= GrepOptions.Default;
             cancel ??= CancellationToken.None;
 
-            #region should cancel?
-            if (cancel.Value.IsCancellationRequested)
-                if (options.SilentCancel) return EndReason.Canceled;
-                else cancel.Value.ThrowIfCancellationRequested();
-            #endregion
-
             var lineReader = new LineReader(haystack);
-            var line = await lineReader.TryReadLine();
-            if (!line.Any()) return EndReason.EmptyInput;
-
             var isMatch = MatchFunction.For(needle, options);
             var lineIndex = 0;
+            var anyInput = false;
 
-            char[] nextLine;
-            while ((nextLine = await lineReader.TryReadLine()).Any()) {
-                #region should cancel?
+            char[] line;
+            while ((line = await lineReader.TryReadLine()).Any()) {
+                anyInput = true;
                 if (cancel.Value.IsCancellationRequested)
                     if (options.SilentCancel) return EndReason.Canceled;
                     else cancel.Value.ThrowIfCancellationRequested();
-                #endregion
 
                 var match = isMatch(line, lineIndex);
                 lineIndex++;
-                line = nextLine;
 
-                if (!match.IsMatch) continue;
-                if (!processAndContinue(match)) return EndReason.Interrupted;
+                if (match.IsMatch && !processAndContinue(match)) return EndReason.Interrupted;
             }
 
-            //reading last line
-            var lastMatch = isMatch(line, lineIndex);
-            if (!lastMatch.IsMatch) return EndReason.EndOfInput;
-            processAndContinue(lastMatch);
-
-            return EndReason.EndOfInput;
+            return anyInput ? EndReason.EndOfInput : EndReason.EmptyInput;
         }
 
         public static async Task<EndReason> Grep(
