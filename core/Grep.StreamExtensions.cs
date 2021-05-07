@@ -13,13 +13,13 @@ namespace YAGrep {
             options ??= GrepOptions.Default;
             cancel ??= CancellationToken.None;
 
-            var lineReader = new LineReader(haystack);
+            var lineReader = new LineReader(haystack, options);
             var isMatch = MatchFunction.For(needle, options);
             var lineIndex = 0;
             var anyInput = false;
 
-            char[] line;
-            while ((line = await lineReader.TryReadLine()).Any()) {
+            Line line;
+            while ((line = await lineReader.ReadLine()).Valid()) {
                 anyInput = true;
                 if (cancel.Value.IsCancellationRequested)
                     if (options.SilentCancel) return EndReason.Canceled;
