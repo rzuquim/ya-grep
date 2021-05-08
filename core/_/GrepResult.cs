@@ -4,14 +4,14 @@ namespace YAGrep {
     public readonly struct GrepResult : IEquatable<GrepResult> {
         public bool IsMatch { get; }
 
-        public char[] Line { get; }
+        public Line Line { get; }
         /// <summary> one based, line index </summary>
         public int LineNumber { get; }
 
         public int MatchStart { get; }
         public int MatchEnd { get; }
 
-        private GrepResult(bool isMatch, char[] line, int lineNumber = -1, int matchStart = -1, int matchEnd = -1) {
+        private GrepResult(bool isMatch, Line line, int lineNumber = -1, int matchStart = -1, int matchEnd = -1) {
             IsMatch = isMatch;
             Line = line;
             LineNumber = lineNumber;
@@ -19,13 +19,12 @@ namespace YAGrep {
             MatchEnd = matchEnd;
         }
 
-        public static GrepResult Failure(char[] line) => new(isMatch: false, line: line);
+        public GrepResult Clone() => new(IsMatch, Line.Clone(), LineNumber, MatchStart, MatchEnd);
 
-        public static GrepResult Success(string line, int lineNumber, int matchStart, int matchEnd) =>
-            new(isMatch: true, line: line.ToCharArray(), lineNumber, matchStart, matchEnd);
-
-        public static GrepResult Success(char[] line, int lineNumber, int matchStart, int matchEnd) =>
+        public static GrepResult Success(Line line, int lineNumber, int matchStart, int matchEnd) =>
             new(isMatch: true, line: line, lineNumber, matchStart, matchEnd);
+
+        public static GrepResult Failure(Line line) => new(isMatch: false, line: line);
 
         public bool Equals(GrepResult other) =>
             IsMatch == other.IsMatch &&
@@ -45,6 +44,7 @@ namespace YAGrep {
             }
         }
 
-        public override string ToString() => new { IsMatch, Line, LineNumber, MatchStart, MatchEnd }.ToString();
+        public override string ToString() =>
+            new { IsMatch, Line = Line.AsString(), LineNumber, MatchStart, MatchEnd }.ToString();
     }
 }

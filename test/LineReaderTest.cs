@@ -8,14 +8,14 @@ namespace Grep.Test {
     public class LineReaderTest {
         [Test]
         public async Task can_read_lines() {
-            using var fileStream = File.OpenRead("./Data/basic_text.txt");
+            using var fileStream = File.OpenRead("./Data/text_ending_in_blank_line.txt");
             using var reader = new StreamReader(fileStream);
             var lineReader = new LineReader(reader, GrepOptions.Default);
 
             Line line;
             var lines = new List<string>();
             while ((line = await lineReader.ReadLine()).Valid())
-                lines.Add(line.ToString());
+                lines.Add(line.AsString());
 
             Assert.That(lines, Is.EquivalentTo(new [] {
                 "Roses are red,",
@@ -27,14 +27,14 @@ namespace Grep.Test {
 
         [Test]
         public async Task supports_lines_bigger_than_the_buffer() {
-            using var fileStream = File.OpenRead("./Data/basic_text.txt");
+            using var fileStream = File.OpenRead("./Data/text_ending_in_blank_line.txt");
             using var reader = new StreamReader(fileStream);
             var lineReader = new LineReader(reader, new GrepOptions(bufferSize: 10));
 
             Line line;
             var lines = new List<string>();
             while ((line = await lineReader.ReadLine()).Valid())
-                lines.Add(line.ToString());
+                lines.Add(line.AsString());
 
             Assert.That(lines, Is.EquivalentTo(new [] {
                 "Roses are red,",

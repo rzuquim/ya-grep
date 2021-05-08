@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,7 +56,7 @@ namespace YAGrep {
             var result = new List<GrepResult>();
 
             bool collect(GrepResult match) {
-                result.Add(match);
+                result.Add(match.Clone());
                 return top < 0 || result.Count < top;
             }
 
