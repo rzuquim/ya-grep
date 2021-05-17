@@ -15,10 +15,4 @@
   <ItemGroup>
     <ProjectReference Include="..\core\Grep.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Data\basic_text.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

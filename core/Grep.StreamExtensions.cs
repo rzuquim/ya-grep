@@ -12,39 +12,25 @@ namespace YAGrep {
             options ??= GrepOptions.Default;
             cancel ??= CancellationToken.None;
 
-            #region should cancel?
-            if (cancel.Value.IsCancellationRequested)
-                if (options.SilentCancel) return EndReason.Canceled;
-                else cancel.Value.ThrowIfCancellationRequested();
-            #endregion
-
-            var line = await haystack.ReadLineAsync();
-            if (line == null) return EndReason.EmptyInput;
-
-            var lineIndex = 0;
+            var lineReader = new LineReader(haystack, options);
             var isMatch = MatchFunction.For(needle, options);
-            string nextLine;
-            while ((nextLine = await haystack.ReadLineAsync()) != null) {
-                #region should cancel?
+            var lineIndex = 0;
+            var anyInput = false;
+
+            Line line;
+            while ((line = await lineReader.NextLine()).Valid()) {
+                anyInput = true;
                 if (cancel.Value.IsCancellationRequested)
                     if (options.SilentCancel) return EndReason.Canceled;
                     else cancel.Value.ThrowIfCancellationRequested();
-                #endregion
 
                 var match = isMatch(line, lineIndex);
                 lineIndex++;
-                line = nextLine;
 
-                if (!match.IsMatch) continue;
-                if (!processAndContinue(match)) return EndReason.Interrupted;
+                if (match.IsMatch && !processAndContinue(match)) return EndReason.Interrupted;
             }
 
-            //reading last line
-            var lastMatch = isMatch(line, lineIndex);
-            if (!lastMatch.IsMatch) return EndReason.EndOfInput;
-            processAndContinue(lastMatch);
-
-            return EndReason.EndOfInput;
+            return anyInput ? EndReason.EndOfInput : EndReason.EmptyInput;
         }
 
         public static async Task<EndReason> Grep(
@@ -70,7 +56,7 @@ namespace YAGrep {
             var result = new List<GrepResult>();
 
             bool collect(GrepResult match) {
-                result.Add(match);
+                result.Add(match.Clone());
                 return top < 0 || result.Count < top;
             }
 

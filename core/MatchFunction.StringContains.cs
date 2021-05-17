@@ -3,8 +3,8 @@
 namespace YAGrep {
     // based on: https://www.codeproject.com/Articles/43726/Optimizing-string-operations-in-C
     // TODO: case-insensitive
-    internal partial class MatchFunction {
-        private static Func<string, int, GrepResult> NaiveStringContains(string needle, GrepOptions options) =>
+    public partial class MatchFunction {
+        public static Func<Line, int, GrepResult> NaiveStringContains(string needle, GrepOptions options) =>
             (line, lineIndex) => {
                 var limit = line.Length - needle.Length + 1;
                 if (limit < 1) return GrepResult.Failure(line);
@@ -14,7 +14,7 @@ namespace YAGrep {
                 var c1 = needle[1];
 
                 // Find the first occurrence of the first character
-                var possibleMatchStart = line.IndexOf(c0, startIndex: 0, limit);
+                var possibleMatchStart = line.IndexOf(c0, startSearch: 0, limit);
                 while (possibleMatchStart != -1) {
                     // Check if the following character is the same like the 2nd character of the needle
                     if (line[possibleMatchStart + 1] != c1) {
