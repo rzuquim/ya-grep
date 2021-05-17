@@ -5,6 +5,7 @@ namespace YAGrep {
     public static class Options {
         public static Option<string> Regexp { get; } = new RegexpOption();
         public static Option<FileInfo> File { get; } = new FileOption().ExistingOnly();
+        public static Option<bool> PrintStatistics { get; } = new PrintStatisticsFlag();
 
         public class RegexpOption : Option<string> {
             public RegexpOption() : base("--regexp") {
@@ -19,6 +20,13 @@ namespace YAGrep {
                 Description = "Source file where to find PATTERNS";
                 IsRequired = true;
                 AddAlias("-f");
+            }
+        }
+
+        public class PrintStatisticsFlag : Option<bool> {
+            public PrintStatisticsFlag() : base("--statistics") {
+                Description = "Prints total line count and elapsed time after search results";
+                AddAlias("-s");
             }
         }
     }
