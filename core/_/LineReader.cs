@@ -13,12 +13,14 @@ namespace YAGrep {
 
         private int _lineStartPosition = -1;
         private int _lineEndPosition = -1;
+        private Line _line;
         private GrepOptions _options;
 
         public LineReader(StreamReader haystack, GrepOptions options) {
             _buffer = new char[options.BufferSize];
             _haystack = haystack;
             _options = options;
+            _line = new Line(_buffer, options.Trim);
         }
 
         public async Task<Line> NextLine() {
@@ -42,23 +44,24 @@ namespace YAGrep {
                 if(_lineEndPosition > -1) break;
                 // could not find line break
                 if (_eof) {
-                    var lastLine = new Line(_buffer, _lineStartPosition, _notReadCount);
-                    _lineStartPosition += lastLine.Length;
+                    _line.Update(_lineStartPosition, _notReadCount);
+                    _lineStartPosition += _line.Length;
                     _notReadCount = 0;
-                    return lastLine;
+                    return _line;
                 }
 
                 // more to read, but not line end yet, so we must expand the buffer
                 var currentBuffer = _buffer;
                 _buffer = new char[_buffer.Length * 2];
                 currentBuffer.CopyTo(_buffer, 0);
+                _line = new Line(_buffer, _options.Trim);
             }
 
             var lineLength = _lineEndPosition - _lineStartPosition;
-            var currentLine = new Line(_buffer, _lineStartPosition, lineLength);
+            _line.Update(_lineStartPosition, lineLength);
             _lineStartPosition = _lineEndPosition + 1; // preparing next line
             _notReadCount -= (lineLength + 1); // marking as read on the buffer
-            return currentLine;
+            return _line;
         }
 
         private bool ThereIsMoreToReadFromBuffer() => _notReadCount > 0;

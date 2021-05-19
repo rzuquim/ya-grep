@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using static YAGrep.EndReason;
 
 namespace YAGrep {
     public static class StreamExtensions {
-        public static async Task<EndReason> Grep(
+        public static async Task<GrepStatistics> Grep(
                 this StreamReader haystack, string needle, Func<GrepResult, bool> processAndContinue,
                 GrepOptions? options = null, CancellationToken? cancel = null) {
             options ??= GrepOptions.Default;
@@ -14,31 +15,33 @@ namespace YAGrep {
 
             var lineReader = new LineReader(haystack, options);
             var isMatch = MatchFunction.For(needle, options);
-            var lineIndex = 0;
-            var anyInput = false;
+            var statistics = GrepStatistics.Start(options.CaptureStatistics);
 
             Line line;
             while ((line = await lineReader.NextLine()).Valid()) {
-                anyInput = true;
                 if (cancel.Value.IsCancellationRequested)
-                    if (options.SilentCancel) return EndReason.Canceled;
+                    if (options.SilentCancel) return statistics.EndRun(Canceled);
                     else cancel.Value.ThrowIfCancellationRequested();
 
-                var match = isMatch(line, lineIndex);
-                lineIndex++;
+                var match = isMatch(line, statistics.LineIndex());
 
-                if (match.IsMatch && !processAndContinue(match)) return EndReason.Interrupted;
+                if (!match.IsMatch) continue;
+
+                statistics.RegisterMatch();
+                if (!processAndContinue(match)) return statistics.EndRun(Interrupted);
             }
 
-            return anyInput ? EndReason.EndOfInput : EndReason.EmptyInput;
+            return statistics.TotalLinesRead > 0
+                ? statistics.EndRun(EndOfInput)
+                : statistics.EndRun(EmptyInput);
         }
 
-        public static async Task<EndReason> Grep(
+        public static async Task<GrepStatistics> Grep(
                 this Stream haystack, string needle, Action<GrepResult> process,
                 GrepOptions? options = null, CancellationToken? cancel = null) =>
            await Grep(haystack, needle, r => { process(r); return true; }, options, cancel);
 
-        public static async Task<EndReason> Grep(
+        public static async Task<GrepStatistics> Grep(
                 this Stream haystack, string needle, Func<GrepResult, bool> processAndContinue,
                 GrepOptions? options = null, CancellationToken? cancel = null) {
             options ??= GrepOptions.Default;
@@ -46,18 +49,19 @@ namespace YAGrep {
             return await reader.Grep(needle, processAndContinue, options, cancel);
         }
 
-        public static async Task<EndReason> Grep(
+        public static async Task<GrepStatistics> Grep(
                 this StreamReader haystack, string needle, Action<GrepResult> process,
                 GrepOptions? options = null, CancellationToken? cancel = null) =>
             await Grep(haystack, needle, r => { process(r); return true; }, options, cancel);
 
         public static async Task<IEnumerable<GrepResult>> Grep(
-                this Stream haystack, string needle, int top = -1, GrepOptions? options = null) {
+                this Stream haystack, string needle, GrepOptions? options = null) {
+            options ??= GrepOptions.Default;
             var result = new List<GrepResult>();
 
             bool collect(GrepResult match) {
                 result.Add(match.Clone());
-                return top < 0 || result.Count < top;
+                return options.MaxCount < 0 || result.Count < options.MaxCount;
             }
 
             await haystack.Grep(needle, collect, options);

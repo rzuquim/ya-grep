@@ -5,11 +5,19 @@ namespace YAGrep {
         public Encoding Encoding { get; }
         public bool SilentCancel { get; }
         public int BufferSize { get; }
+        public bool Trim { get; }
+        public bool CaptureStatistics { get; set; }
+        public int MaxCount { get; }
 
-        public GrepOptions(Encoding? encoding = null, bool? silentCancel = null, int? bufferSize = null) {
+        public GrepOptions(
+                Encoding? encoding = null, bool silentCancel = true, int bufferSize = _128Kb,
+                bool trim = false, int maxCount = -1, bool captureStatistics = false) {
             Encoding = encoding ?? Encoding.UTF8;
-            SilentCancel = silentCancel ?? true;
-            BufferSize = bufferSize ?? _128Kb;
+            MaxCount = maxCount;
+            SilentCancel = silentCancel;
+            BufferSize = bufferSize;
+            Trim = trim;
+            CaptureStatistics = captureStatistics;
         }
 
         public static GrepOptions Default { get; } = new();

@@ -162,6 +162,28 @@ namespace Grep.Test {
             }));
         }
 
+        [Test]
+        public async Task can_read_multiple_lines_with_trim() {
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(_multipleLinesNeedingTrim));
+            using var reader = new StreamReader(stream);
+
+            var lineReader = new LineReader(reader, new GrepOptions(trim: true));
+
+            Line line;
+            var lines = new List<string>();
+            while ((line = await lineReader.NextLine()).Valid())
+                lines.Add(line.AsString());
+
+            Assert.That(lines, Is.EquivalentTo(new[] {
+                "Roses are red,",
+                "",
+                "Violets are blue,",
+                "Sugar is sweet,",
+                "",
+                "And so are you."
+            }));
+        }
+
         #region possibilities
         private readonly char[] _empty = "".ToCharArray();
         private readonly char[] _singleLine = "Roses are red,".ToCharArray();
@@ -183,6 +205,14 @@ namespace Grep.Test {
              "Violets are blue," + '\n' +
              "Sugar is sweet," + '\n' +
              "And so are you." + '\n').ToCharArray();
+
+        private readonly char[] _multipleLinesNeedingTrim =
+            ("Roses are red,  " + '\n' +
+             '\n' +
+             "   Violets are blue, " + '\n' +
+             " Sugar is sweet,         " + '\n' +
+             "    " + '\n' +
+             "    And so are you.   ").ToCharArray();
 
         private readonly char[] _multipleLinesWithEmptyLine =
             ("Roses are red," + '\n' +

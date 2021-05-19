@@ -6,6 +6,8 @@ namespace YAGrep {
         public static Option<string> Regexp { get; } = new RegexpOption();
         public static Option<FileInfo> File { get; } = new FileOption().ExistingOnly();
         public static Option<bool> PrintStatistics { get; } = new PrintStatisticsFlag();
+        public static Option<bool> Trim { get; } = new TrimFlag();
+        public static Option<int> MaxCount { get; } = new MaxCountOption();
 
         public class RegexpOption : Option<string> {
             public RegexpOption() : base("--regexp") {
@@ -27,6 +29,19 @@ namespace YAGrep {
             public PrintStatisticsFlag() : base("--statistics") {
                 Description = "Prints total line count and elapsed time after search results";
                 AddAlias("-s");
+            }
+        }
+
+        public class TrimFlag : Option<bool> {
+            public TrimFlag() : base("--trim") {
+                Description = "Should trim lines before search.";
+            }
+        }
+
+        public class MaxCountOption : Option<int> {
+            public MaxCountOption() : base("--max-count") {
+                Description = "Stop reading a file after NUM matching lines.";
+                AddAlias("-m");
             }
         }
     }

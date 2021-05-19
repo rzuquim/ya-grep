@@ -1,7 +1,6 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using static System.Console;
@@ -12,24 +11,27 @@ namespace YAGrep {
             var rootCommand = new RootCommand {
                 Options.Regexp,
                 Options.File,
-                Options.PrintStatistics
+                Options.PrintStatistics,
+                Options.Trim,
+                Options.MaxCount
             };
 
             rootCommand.Description = "Yet another sub-optimal grep implementation.";
-            rootCommand.Handler = CommandHandler.Create<string, FileInfo, bool>(
-                async (regexp, file, statistics) => {
-                    var totalMatches = 0;
-                    var stopWatch = Stopwatch.StartNew();
+            rootCommand.Handler = CommandHandler.Create<string, FileInfo, bool, bool, int>(
+                async (regexp, file, statistics, trim, maxCount) => {
+                    var result = await file.FullName.Grep(regexp,
+                                             r => WriteLine("[line {0}]{1}", r.LineNumber, r.Line.AsString()),
+                                             new GrepOptions(trim: trim,
+                                                             maxCount: maxCount,
+                                                             captureStatistics: statistics));
 
-                    await file.FullName.Grep(regexp,
-                                             r => {
-                                                 totalMatches++;
-                                                 WriteLine("[line {0}]: {1}", r.LineNumber, r.Line.AsString());
-                                             });
+                    if (statistics) {
+                        WriteLine("------------------------");
+                        WriteLine("------ STATISTICS ------");
+                        WriteLine("------------------------");
 
-                    stopWatch.Stop();
-                    if (statistics)
-                        WriteLine($"Total matches: {totalMatches}. Runtime: {stopWatch.ElapsedMilliseconds} ms");
+                        WriteLine(result);
+                    }
                 });
 
             Environment.ExitCode = await rootCommand.InvokeAsync(args);

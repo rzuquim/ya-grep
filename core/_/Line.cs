@@ -1,24 +1,33 @@
 ﻿using System;
 
 namespace YAGrep {
-    public readonly struct Line {
+    public class Line {
         private readonly char[] _buffer;
-        private readonly int _startIndex;
+        private int _startIndex;
         private readonly bool _trim;
-        public int Length { get; }
+        public int Length { get; private set; }
 
-        public Line(string line, bool trim = true) : this(line.ToCharArray(), 0, line.Length, trim) { }
+        public Line(string line, bool trim = true) : this(line.ToCharArray(), trim) =>
+            Update(startIndex: 0, line.Length);
 
-        public Line(char[] buffer, int startIndex, int length, bool trim = true) {
+        public Line(char[] buffer, bool trim = false) {
             _buffer = buffer;
-            _startIndex = startIndex;
             _trim = trim;
+        }
+
+        public Line Update(int startIndex, int length) {
+            _startIndex = startIndex;
             Length =
                 length == 0 ? length : // empty line
                 length < 0 || startIndex + length > _buffer.Length ? - 1 : // is valid?
                 _buffer[_startIndex + length - 1] == '\r' ? length - 1 : // windows \r\n
                 length;
+
+            if (_trim)
+                (_startIndex, Length) = SearchForNonBlankLimits(_startIndex, Length);
+            return this;
         }
+
 
         public int this[int i] => _buffer[_startIndex + i];
 
@@ -41,6 +50,29 @@ namespace YAGrep {
 
         public string AsString() => new(_buffer, _startIndex, Length);
 
-        public static readonly Line EndOfFile = new(new char[0], startIndex: 0, length: -1);
+        public static readonly Line EndOfFile = new("") { Length = -1 };
+
+        // Private
+        private (int startIndex, int length) SearchForNonBlankLimits(int startIndex, int length) {
+            var startSpacesCount = 0;
+            for (var i = 0; i < length; i++) {
+                if (_buffer[_startIndex + i] == ' ') startSpacesCount++;
+                else break;
+            }
+
+            // only spaces in line
+            if (startSpacesCount >= length) return (0, 0);
+
+            var endSpacesCount = 0;
+            for (var i = 0; i < length; i++) {
+                if (_buffer[_startIndex + length - i - 1] == ' ') endSpacesCount++;
+                else break;
+            }
+
+            return (
+                startIndex: startIndex + startSpacesCount,
+                length: length - (startSpacesCount + endSpacesCount)
+            );
+        }
     }
 }
