@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- case sensitivity
 - regex support
 - multiple files and directories
+
+## [0.0.3] - 2021-05-21
+- case sensitivity
 
 ## [0.0.2] - 2021-05-18
 
