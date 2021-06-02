@@ -49,6 +49,9 @@ namespace YAGrep {
         public async Task FlushInto(StreamWriter target, bool autoFlush = true) =>
             await Line.FlushInto(target, autoFlush);
 
+        public void FlushIntoSync(StreamWriter target, bool autoFlush = true) =>
+            Line.FlushIntoSync(target, autoFlush);
+
         public override string ToString() =>
             new { IsMatch, Line = Line.AsString(), LineNumber, MatchStart, MatchEnd }.ToString();
 

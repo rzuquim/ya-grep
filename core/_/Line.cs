@@ -59,6 +59,11 @@ namespace YAGrep {
             if (autoFlush) await target.FlushAsync();
         }
 
+        public void FlushIntoSync(StreamWriter target, bool autoFlush) {
+            target.WriteLine(_buffer, _startIndex, Length);
+            if (autoFlush) target.Flush();
+        }
+
         // Private
         private (int startIndex, int length) SearchForNonBlankLimits(int startIndex, int length) {
             var startSpacesCount = 0;
