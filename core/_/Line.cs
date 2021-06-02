@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace YAGrep {
     public class Line {
@@ -51,6 +53,11 @@ namespace YAGrep {
         public string AsString() => new(_buffer, _startIndex, Length);
 
         public static readonly Line EndOfFile = new("") { Length = -1 };
+
+        public async Task FlushInto(StreamWriter target, bool autoFlush) {
+            await target.WriteLineAsync(_buffer, _startIndex, Length);
+            if (autoFlush) await target.FlushAsync();
+        }
 
         // Private
         private (int startIndex, int length) SearchForNonBlankLimits(int startIndex, int length) {

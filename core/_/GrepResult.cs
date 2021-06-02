@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace YAGrep {
     public readonly struct GrepResult : IEquatable<GrepResult> {
@@ -44,7 +46,11 @@ namespace YAGrep {
             }
         }
 
+        public async Task FlushInto(StreamWriter target, bool autoFlush = true) =>
+            await Line.FlushInto(target, autoFlush);
+
         public override string ToString() =>
             new { IsMatch, Line = Line.AsString(), LineNumber, MatchStart, MatchEnd }.ToString();
+
     }
 }

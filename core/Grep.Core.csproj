@@ -4,11 +4,11 @@
         <Title>YAGrep</Title>
 
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Version>0.0.0.2</Version>
+        <Version>0.0.0.3</Version>
 
         <Description>Yet Another Grep implementation</Description>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageIcon>icon.png</PackageIcon>
+        <PackageIcon>icon.jpg</PackageIcon>
         <PackageProjectUrl>https://github.com/rzuquim/ya-grep</PackageProjectUrl>
         <PackageReleaseNotes>https://github.com/rzuquim/ya-grep/blob/main/CHANGELOG.md</PackageReleaseNotes>
         <PackageTags>grep find text</PackageTags>
@@ -28,6 +28,6 @@
 
     <ItemGroup>
         <None Include="..\LICENSE" Pack="true" PackagePath="" Visible="false" />
-        <None Include="..\icon.png" Pack="true" PackagePath="" Visible="false" />
+        <None Include="..\icon.jpg" Pack="true" PackagePath="" Visible="false" />
     </ItemGroup>
 </Project>

@@ -26,7 +26,6 @@ namespace Grep.Test {
             ));
         }
 
-
         [Test]
         public async Task can_find_multiple_matches() {
             using var reader = GetReader();
@@ -51,6 +50,20 @@ namespace Grep.Test {
                         GrepResultSuccess("And so are you.", lineNumber: 4, matchStart: 7, matchEnd: 9)
                     }
             ));
+        }
+
+        [Test]
+        public async Task can_flush_lines_into_stream() {
+            using var target = new MemoryStream();
+            using var writer = new StreamWriter(target);
+            using var reader = GetReader();
+
+            writer.NewLine = "\n";
+            await reader.Grep("are", async match => await match.FlushInto(writer));
+
+            target.Position = 0;
+            var asLines = new string(Encoding.UTF8.GetChars(target.ToArray())).Split(separator: '\n');
+            Assert.That(asLines, Is.EqualTo(new[] {"Roses are red,", "Violets are blue,", "And so are you.", ""}));
         }
 
         [Test]

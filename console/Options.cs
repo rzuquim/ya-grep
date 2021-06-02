@@ -8,6 +8,7 @@ namespace YAGrep {
         public static Option<bool> PrintStatistics { get; } = new PrintStatisticsFlag();
         public static Option<bool> Trim { get; } = new TrimFlag();
         public static Option<int> MaxCount { get; } = new MaxCountOption();
+        public static Option<FileInfo> OutputFile { get; } = new OutputFileOption();
 
         public class RegexpOption : Option<string> {
             public RegexpOption() : base("--regexp") {
@@ -42,6 +43,13 @@ namespace YAGrep {
             public MaxCountOption() : base("--max-count") {
                 Description = "Stop reading a file after NUM matching lines.";
                 AddAlias("-m");
+            }
+        }
+
+        public class OutputFileOption : Option<FileInfo> {
+            public OutputFileOption() : base("--output-file") {
+                Description = "Writes the result on an output file.";
+                AddAlias("-o");
             }
         }
     }
